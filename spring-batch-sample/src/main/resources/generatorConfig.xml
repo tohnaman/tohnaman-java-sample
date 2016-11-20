@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+	<classPathEntry
+		location="sqlite-jdbc-3.8.11.2.jar" />
+	<context id="context1">
+		<jdbcConnection
+			driverClass="org.sqlite.JDBC"
+			connectionURL="jdbc:sqlite:main.sqlite"
+			userId=""
+			password="" />
+		<javaModelGenerator
+			targetPackage="jp.tokyo.higashimurayama.tohnaman.batch.mybatis.model"
+			targetProject="D:/WORKSPACE/SpringToolSuite/Java-Sample-GitHub/spring-batch-sample/src/main/java" />
+		<sqlMapGenerator
+			targetPackage="jp.tokyo.higashimurayama.tohnaman.batch.mybatis.mapper"
+			targetProject="D:/WORKSPACE/SpringToolSuite/Java-Sample-GitHub/spring-batch-sample/src/main/resources" />
+		<javaClientGenerator
+			targetPackage="jp.tokyo.higashimurayama.tohnaman.batch.mybatis.mapper"
+			targetProject="D:/WORKSPACE/SpringToolSuite/Java-Sample-GitHub/spring-batch-sample/src/main/java"
+			type="XMLMAPPER" />
+
+		<table modelType="flat" tableName="MST_ADDRESS" />
+	</context>
+</generatorConfiguration>
