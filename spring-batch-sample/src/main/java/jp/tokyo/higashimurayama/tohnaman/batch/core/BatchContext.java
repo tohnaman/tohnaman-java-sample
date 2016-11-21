@@ -1,4 +1,4 @@
-package jp.tokyo.higashimurayama.tohnaman.batch;
+package jp.tokyo.higashimurayama.tohnaman.batch.core;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;

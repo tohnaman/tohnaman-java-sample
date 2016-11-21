@@ -15,16 +15,15 @@ import jp.tokyo.higashimurayama.tohnaman.batch.mybatis.model.MstAddress;
  * </ul>
  */
 public class CsvToModelItemProcessor implements ItemProcessor<AddressDto, MstAddress> {
-
 	@Override
 	public MstAddress process(AddressDto item) throws Exception {
-		MstAddress output = null;
 		String cityName = item.getCityName();
 		if (cityName.equals("東村山市")) {
-			output = new MstAddress();
+			MstAddress output = new MstAddress();
 			BeanUtils.copyProperties(item, output);
 			output.setZip(item.getZip().replace("-", ""));
+			return output;
 		}
-		return output;
+		return null;
 	}
 }

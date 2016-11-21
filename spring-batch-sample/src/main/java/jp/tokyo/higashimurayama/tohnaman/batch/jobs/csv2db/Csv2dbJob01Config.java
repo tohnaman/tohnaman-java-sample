@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.FileSystemResource;
 
-import jp.tokyo.higashimurayama.tohnaman.batch.BatchContext;
+import jp.tokyo.higashimurayama.tohnaman.batch.core.BatchContext;
 import jp.tokyo.higashimurayama.tohnaman.batch.mybatis.model.MstAddress;
 
 /**
@@ -80,7 +80,7 @@ public class Csv2dbJob01Config {
 		FlatFileItemReader<AddressDto> reader = new FlatFileItemReader<>();
 		reader.setResource(new FileSystemResource(CSV_FILE_PATH));
 		reader.setLinesToSkip(1);
-		reader.setEncoding("MS932");
+		reader.setEncoding("Shift_JIS");
 
 		DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer();
 		lineTokenizer.setNames(new String[] { "id", "prefCd", "cityCd", "townCd", "zip", "officeFlg", "deleteFlg",
