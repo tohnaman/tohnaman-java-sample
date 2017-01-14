@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.io.FileSystemResource;
 
 import jp.tokyo.higashimurayama.tohnaman.batch.core.BatchContext;
+import jp.tokyo.higashimurayama.tohnaman.batch.core.listeners.LogListener;
 import jp.tokyo.higashimurayama.tohnaman.batch.mybatis.model.MstAddress;
 
 /**
@@ -36,6 +37,9 @@ public class Csv2dbJob01Config {
 	@Autowired
 	private SqlSessionFactory sqlSessionFactory;
 
+	@Autowired
+	private LogListener logListener;
+
 	/**
 	 * ジョブ
 	 *
@@ -46,6 +50,7 @@ public class Csv2dbJob01Config {
 		// @formatter:off
 		return jobBuilderFactory
 				.get("csv2dbJob")
+				.listener(logListener)
 				.flow(csv2dbStep())
 				.end()
 				.build();
