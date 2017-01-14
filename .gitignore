@@ -32,6 +32,15 @@ Servers/
 .recommenders/
 
 # --------------------
+# VSCode
+# --------------------
+.vscode/
+settings.json
+cSpell.json
+javac-services.*.log
+javac-services.*.log.lck
+
+# --------------------
 # Java
 # --------------------
 *.class
