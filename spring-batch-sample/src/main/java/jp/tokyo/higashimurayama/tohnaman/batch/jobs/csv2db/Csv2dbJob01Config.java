@@ -7,11 +7,13 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.FileSystemResource;
@@ -27,18 +29,17 @@ import jp.tokyo.higashimurayama.tohnaman.batch.mybatis.model.MstAddress;
 @Import({ BatchContext.class })
 public class Csv2dbJob01Config {
 
-	/** CSVファイルパス */
-	private static final String CSV_FILE_PATH = "D:/CsvData/13tokyo.csv";
-
 	@Autowired
 	private JobBuilderFactory jobBuilderFactory;
 	@Autowired
 	private StepBuilderFactory stepBuilderFactory;
 	@Autowired
 	private SqlSessionFactory sqlSessionFactory;
-
 	@Autowired
 	private LogListener logListener;
+
+	@Autowired
+	private FlatFileItemReader<AddressDto> addressReader;
 
 	/**
 	 * ジョブ
@@ -68,7 +69,7 @@ public class Csv2dbJob01Config {
 		return stepBuilderFactory
 				.get("csv2dbStep")
 				.<AddressDto, MstAddress>chunk(1000)
-				.reader(addressReader())
+				.reader(addressReader)
 				.processor(csvToModelItemProcessor())
 				.writer(addressWriter())
 				.build();
@@ -81,9 +82,10 @@ public class Csv2dbJob01Config {
 	 * @return
 	 */
 	@Bean
-	public FlatFileItemReader<AddressDto> addressReader() {
+	@StepScope
+	public FlatFileItemReader<AddressDto> addressReader(@Value("#{jobParameters['csvFilePath']}") String csvFilePath) {
 		FlatFileItemReader<AddressDto> reader = new FlatFileItemReader<>();
-		reader.setResource(new FileSystemResource(CSV_FILE_PATH));
+		reader.setResource(new FileSystemResource(csvFilePath));
 		reader.setLinesToSkip(1);
 		reader.setEncoding("Shift_JIS");
 
