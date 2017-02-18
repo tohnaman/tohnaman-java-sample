@@ -20,6 +20,7 @@ import org.springframework.core.io.FileSystemResource;
 
 import jp.tokyo.higashimurayama.tohnaman.batch.core.BatchContext;
 import jp.tokyo.higashimurayama.tohnaman.batch.core.listeners.LogListener;
+import jp.tokyo.higashimurayama.tohnaman.batch.core.tasklet.FileExistCheckTasklet;
 import jp.tokyo.higashimurayama.tohnaman.batch.mybatis.model.MstAddress;
 
 /**
@@ -41,6 +42,12 @@ public class Csv2dbJob01Config {
 	@Autowired
 	private FlatFileItemReader<AddressDto> addressReader;
 
+	@Autowired
+	private MasterDeleteTasklet masterDeleteTasklet;
+
+	@Value("${csv2dbjob.filepath}")
+	private String filePath;
+
 	/**
 	 * ジョブ
 	 *
@@ -52,14 +59,48 @@ public class Csv2dbJob01Config {
 		return jobBuilderFactory
 				.get("csv2dbJob")
 				.listener(logListener)
-				.flow(csv2dbStep())
-				.end()
+				.start(fileExistCheckStep())
+					.on(FileExistCheckTasklet.NOT_EXIST).end()
+				.from(fileExistCheckStep())
+					.next(masterDeleteStep())
+					.next(csv2dbStep())
+					.build()
 				.build();
 		// @formatter:on
 	}
 
 	/**
-	 * ステップ
+	 * ファイル存在チェックステップ
+	 * 
+	 * @return
+	 */
+	@Bean
+	public Step fileExistCheckStep() {
+		// @formatter:off
+		return stepBuilderFactory
+				.get("fileExistCheckStep")
+				.tasklet(fileExistCheckTasklet())
+				.build();
+		// @formatter:on
+	}
+
+	/**
+	 * マスタ削除ステップ
+	 * 
+	 * @return
+	 */
+	@Bean
+	public Step masterDeleteStep() {
+		// @formatter:off
+		return stepBuilderFactory
+				.get("masterDeleteStep")
+				.tasklet(masterDeleteTasklet)
+				.build();
+		// @formatter:on
+	}
+
+	/**
+	 * マスタ更新ステップ
 	 *
 	 * @return
 	 */
@@ -74,6 +115,28 @@ public class Csv2dbJob01Config {
 				.writer(addressWriter())
 				.build();
 		// @formatter:on
+	}
+
+	/**
+	 * ファイル存在チェック用Tasklet
+	 * 
+	 * @return
+	 */
+	@Bean
+	public FileExistCheckTasklet fileExistCheckTasklet() {
+		FileExistCheckTasklet tasklet = new FileExistCheckTasklet();
+		tasklet.setFilePath(filePath);
+		return tasklet;
+	}
+
+	/**
+	 * マスタ削除用Tasklet
+	 * 
+	 * @return
+	 */
+	@Bean
+	public MasterDeleteTasklet masterDeleteTasklet() {
+		return new MasterDeleteTasklet();
 	}
 
 	/**
